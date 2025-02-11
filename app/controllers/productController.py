@@ -72,3 +72,22 @@ def sync_create_product(product_data: dict, db: Session):
     db.refresh(db_product)
     print(f"✅ Producto sincronizado en DeleteProduct: {db_product.nombreProducto}")
     return db_product
+
+
+def sync_update_product(product_data: dict, db: Session):
+    """ 📌 Sincronizar la actualización del producto desde `UpdateProduct` """
+    
+    db_product = db.query(Product).filter(Product.id == product_data["id"]).first()
+    if not db_product:
+        print(f"⚠️ Producto con ID {product_data['id']} no encontrado en CreateProduct.")
+        return {"error": "Producto no encontrado en CreateProduct"}
+
+    # 🔄 Actualizar los datos del producto
+    for key, value in product_data.items():
+        setattr(db_product, key, value)
+
+    db.commit()
+    db.refresh(db_product)
+    
+    print(f"✅ Producto sincronizado en CreateProduct: {db_product.nombreProducto}")
+    return db_product
